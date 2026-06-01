@@ -39,6 +39,7 @@ jobs:
           DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/inventory_test
           DATABASE_URL_SYNC: postgresql+psycopg2://postgres:postgres@localhost:5432/inventory_test
           SECRET_KEY: ci-test-secret-key-minimum-32-characters
+          API_V1_PREFIX: /api/v1
         run: alembic upgrade head
       - name: Pytest
         working-directory: backend
@@ -46,6 +47,7 @@ jobs:
           DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/inventory_test
           DATABASE_URL_SYNC: postgresql+psycopg2://postgres:postgres@localhost:5432/inventory_test
           SECRET_KEY: ci-test-secret-key-minimum-32-characters
+          API_V1_PREFIX: /api/v1
         run: pytest -q
 
   frontend:

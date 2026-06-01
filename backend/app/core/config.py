@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     app_name: str = "StockLedger"
     app_env: str = "development"
     debug: bool = False
-    api_v1_prefix: str = ""
+    api_v1_prefix: str = "/api/v1"
 
     database_url: str
     database_url_sync: str

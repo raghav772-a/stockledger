@@ -1,0 +1,24 @@
+# Production-style stack (local VPS or single-server deploy)
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+
+name: stockledger
+
+services:
+  db:
+    restart: unless-stopped
+
+  backend:
+    restart: unless-stopped
+    environment:
+      DEBUG: "false"
+      AUTO_SEED: "false"
+      APP_ENV: production
+      API_V1_PREFIX: /api/v1
+      # Override SECRET_KEY and CORS_ORIGINS via .env or host environment
+
+  frontend:
+    restart: unless-stopped
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: /api/v1

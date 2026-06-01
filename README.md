@@ -2,42 +2,70 @@
 
 Zoho Inventory–style inventory and sales order management: items, customers, sales orders, stock tracking, reports, and a professional SaaS UI. Built with FastAPI, React, PostgreSQL, and Docker.
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/raghav772-a/stockledger)
+
+## Submission & live URLs
+
+See **[SUBMISSION.md](./SUBMISSION.md)** for:
+
+- GitHub repository link  
+- Docker image links (GHCR)  
+- Live application URLs (Render)  
+
+See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for full deployment instructions.
+
 ## Tech Stack
 
 | Layer | Technologies |
 |-------|-------------|
 | Backend | Python, FastAPI, PostgreSQL, SQLAlchemy, Alembic, JWT, Pydantic |
 | Frontend | React, Vite, Tailwind CSS, Redux Toolkit, React Router, Recharts |
-| DevOps | Docker, Docker Compose, Nginx, GitHub Actions |
+| DevOps | Docker, Docker Compose, Nginx, GitHub Actions, Render, GHCR |
 
 ## Project Structure
 
 ```
-inventory-saas/
-├── backend/          # FastAPI API (clean architecture)
-├── frontend/         # React SPA
-├── nginx/            # Reverse proxy config
-├── docker-compose.yml
+stockledger/
+├── backend/              # FastAPI API
+├── frontend/             # React SPA
+├── docker-compose.yml    # Local full stack
+├── docker-compose.prod.yml
+├── render.yaml           # Render Blueprint (free cloud deploy)
+├── DEPLOYMENT.md
+├── SUBMISSION.md
 └── .github/workflows/
 ```
 
 ## Quick Start (Docker)
 
 ```bash
-cd inventory-saas
+git clone https://github.com/raghav772-a/stockledger.git
+cd stockledger
 docker compose up --build
 ```
 
-- Frontend: http://localhost (port 80)
-- API docs: http://localhost:8000/docs
-- Default admin (after seed): `admin@example.com` / `Admin123!`
+| Service | URL |
+|---------|-----|
+| **Web UI** | http://localhost |
+| **API docs** | http://localhost:8000/docs |
+| **Login** | `admin@example.com` / `Admin123!` |
 
-With unified proxy profile:
+Production-style compose:
 
 ```bash
-docker compose --profile proxy up --build
-# App via http://localhost:8080
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 ```
+
+## Cloud deployment (free)
+
+1. Push to GitHub (or use the repo above).  
+2. Click **Deploy to Render** (button at top) or open [this link](https://render.com/deploy?repo=https://github.com/raghav772-a/stockledger).  
+3. Wait for services to build; use URLs from [SUBMISSION.md](./SUBMISSION.md).
+
+Docker images are built automatically on `main` and published to:
+
+- `ghcr.io/raghav772-a/stockledger-backend:latest`  
+- `ghcr.io/raghav772-a/stockledger-frontend:latest`  
 
 ## Local Development
 
@@ -49,7 +77,6 @@ python -m venv .venv
 # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env
-# Start PostgreSQL and update DATABASE_URL in .env
 alembic upgrade head
 python -m scripts.seed
 uvicorn app.main:app --reload
@@ -75,56 +102,16 @@ Base URL: `/api/v1`
 | Customers | CRUD, order history |
 | Orders | Create (transactional), status updates |
 | Dashboard | Stats, monthly sales, top products, low stock |
-| Inventory | Product movement logs |
+| Inventory | Movement logs |
 
 OpenAPI: `/docs`
-
-## Roles
-
-- **Admin** — Full access, user management
-- **Manager** — Products, customers, orders, stock
-- **Staff** — View data, create orders
-
-## Deployment
-
-### Frontend (Vercel)
-
-1. Import `frontend/` as project root
-2. Set `VITE_API_URL` to your production API (e.g. `https://api.example.com/api/v1`)
-3. Deploy
-
-### Backend (Render / Railway / Fly.io)
-
-1. Deploy `backend/` with Dockerfile
-2. Set environment variables from `backend/.env.example`
-3. Use **Neon** or **Supabase** for PostgreSQL:
-   - `DATABASE_URL=postgresql+asyncpg://...`
-   - `DATABASE_URL_SYNC=postgresql+psycopg2://...`
-4. Run migrations: `alembic upgrade head`
-5. Seed: `python -m scripts.seed`
-
-### Environment Variables
-
-See `backend/.env.example` and `frontend/.env.example`. Never commit real secrets.
 
 ## Testing
 
 ```bash
-# Backend
-cd backend && pytest
-
-# Frontend
+cd backend && pytest -q
 cd frontend && npm test
 ```
-
-## Security
-
-- Bcrypt password hashing
-- JWT access + refresh tokens
-- CORS allowlist
-- Rate limiting (SlowAPI)
-- SQLAlchemy ORM (parameterized queries)
-- Soft deletes on core entities
 
 ## License
 

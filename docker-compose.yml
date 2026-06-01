@@ -23,18 +23,17 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/inventory_db
       DATABASE_URL_SYNC: postgresql+psycopg2://postgres:postgres@db:5432/inventory_db
+      API_V1_PREFIX: /api/v1
       SECRET_KEY: dev-secret-change-in-production-min-32-chars
       CORS_ORIGINS: http://localhost,http://localhost:5173,http://localhost:80
       DEBUG: "true"
+      AUTO_SEED: "true"
     volumes:
       - ./backend/uploads:/app/uploads
     depends_on:
       db:
         condition: service_healthy
-    command: >
-      sh -c "alembic upgrade head &&
-             python -m scripts.seed &&
-             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    # Migrations + seed run via entrypoint.sh
 
   frontend:
     build:
